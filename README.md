@@ -31,39 +31,7 @@ docker-compose.yaml (already present)
 pcap/sample.pcap (must exist or containers will fail)
 suricata/ directory (used for Suricata log output)
 
-3. Prepare for GitHub
-Step 1 — Create a .gitignore
-Add a .gitignore file:
-# Elasticsearch data volume
-esdata/
-
-# Suricata logs
-suricata/*.log
-suricata/*.json
-
-# Zeek logs (if later mounted)
-*.log
-
-# macOS
-.DS_Store
-Important: Do NOT commit large PCAP files to GitHub.
-If needed, include a small sample PCAP (<10MB) or provide instructions to add one.
-Step 2 — Initialize Git Repository
-From project root:
-git init
-git add .
-git commit -m "Initial commit - m1 detection stack"
-Step 3 — Create GitHub Repository
-On GitHub:
-Create new repository named:
-m1-detection-stack
-Do NOT initialize with README (since you already have one locally).
-Then connect:
-git remote add origin https://github.com/YOUR_USERNAME/m1-detection-stack.git
-git branch -M main
-git push -u origin main
-
-4. Running the Stack
+3. Running the Stack
 From project root:
 docker compose up
 This will start:
@@ -78,7 +46,7 @@ docker compose down
 To wipe Elasticsearch data:
 docker compose down -v
 
-5. Accessing Services
+4. Accessing Services
 Elasticsearch
 Test connectivity:
 curl http://localhost:9200
@@ -89,7 +57,7 @@ http://localhost:5601
 Note: No data ingestion pipeline is configured yet.
 Kibana will start, but no indices will exist until log shipping is implemented.
 
-6. How PCAP Replay Works
+5. How PCAP Replay Works
 Both Zeek and Suricata are configured for offline analysis:
 -r /pcap/sample.pcap
 To analyze a different PCAP:
@@ -102,7 +70,8 @@ to:
 Restart:
 docker compose down
 docker compose up
-7. Architecture Overview
+
+6. Architecture Overview
 PCAP
   │
   ├── Zeek → Network telemetry logs (inside container)
