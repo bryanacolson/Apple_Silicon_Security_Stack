@@ -1,0 +1,63 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - socnet
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - socnet
+    depends_on:
+      - elasticsearch
+
+  zeek:
+    image: zeek/zeek:latest
+    command: /usr/local/zeek/bin/zeek -r /pcap/sample.pcap
+    volumes:
+      - ./pcap:/pcap
+      - zeek_logs:/logs
+    networks:
+      - socnet
+    user: root        # Run as root to avoid permission issues
+    restart: "no"     # Run once and exit
+
+  suricata:
+    image: jasonish/suricata:latest
+    command: -r /pcap/sample.pcap -c /etc/suricata/suricata.yaml
+    volumes:
+      - ./pcap:/pcap
+      - suricata_logs:/var/log/suricata
+    networks:
+      - socnet
+    user: root        # Run as root to avoid permission issues
+    restart: "no"     # Run once and exit
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+
+volumes:
+  esdata:
+  suricata_logs:
+  zeek_logs:
+
+networks:
+  socnet:
+
