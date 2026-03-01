@@ -7,6 +7,7 @@ Kibana 8.12
 Zeek (PCAP replay)
 Suricata (PCAP replay)
 Designed for Apple Silicon (M1/M2 ARM64) environments.
+
 1. Prerequisites
 System Requirements
 macOS (Apple Silicon recommended)
